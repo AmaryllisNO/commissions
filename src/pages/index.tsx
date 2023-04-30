@@ -5,30 +5,47 @@ import styles from '../styles/Main.module.css';
 
 import Accordion from '@/components/UI/Accordion';
 import CommissionStatus from '@/components/UI/CommissionStatus';
+import { useState, useEffect } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Home() {
+  // TYPES
   interface CommissionDataConfig {
-    statusOpen: boolean;
-    activeSlots: number;
-    totalSlots: number;
+    statusOpen?: boolean;
+    activeSlots?: number;
+    totalSlots?: number;
   }
 
-  const getCommissionData = async () => {
-    const res = await fetch('https://commissions-omega.vercel.app/api/data');
-    const data: CommissionDataConfig = await res.json();
-    return data;
-  };
+  // STATES
+  const [commissionData, setCommissionData] = useState<CommissionDataConfig>({
+    statusOpen: false,
+    activeSlots: 0,
+    totalSlots: 0,
+  });
 
-  (async function () {
-    try {
-      const data = await getCommissionData();
-      console.log('data', data);
-    } catch (error) {
-      console.error(error);
-    }
-  })();
+  // EFFECTS
+  useEffect(() => {
+    const getCommissionData = async () => {
+      try {
+        const res = await fetch(
+          'https://commissions-omega.vercel.app/api/commissions'
+        );
+        const data: CommissionDataConfig = await res.json();
+        console.log('response', data);
+        setCommissionData(data);
+        // console.log('commissionData', commissionData);
+      } catch (error) {
+        console.error('there was an error fetching the data', error);
+      }
+    };
+    getCommissionData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    console.log('commissionData', commissionData);
+  }, [commissionData]);
 
   return (
     <>
@@ -47,7 +64,7 @@ export default function Home() {
             // className='object-cover'
           />
         </div>
-        <CommissionStatus />
+        <CommissionStatus commissionData={commissionData} />
         <Accordion />
 
         <div className='h-96 w-80 absolute -bottom-24 -left-24'>

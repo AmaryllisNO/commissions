@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 
-const CommissionStatus = () => {
-  const [statusOpen, setStatusOpen] = useState(false);
-  let activeSlots: number = 2;
-  let totalSlots: number = 6;
+const CommissionStatus = ({ commissionData }: any) => {
+  const { statusOpen, activeSlots, totalSlots } = commissionData;
 
+  console.log('statusOpen', statusOpen);
   // ANIMATIONS
   const pulse = keyframes`
   0% {
@@ -48,32 +47,30 @@ const CommissionStatus = () => {
   `;
 
   return (
-    <div
-      className='flex flex-row justify-between items-center pl-4 mb-12 mt-4'
-      onClick={() => {
-        setStatusOpen((prevStatusOpen) => !prevStatusOpen);
-      }}
-    >
-      <StatusIndicator />
-      {statusOpen ? (
-        <>
-          <span className='text-sm uppercase text-green-400'>
-            Commissions Open
-          </span>
-          <span className='text-xs uppercase'>
-            {activeSlots}/{totalSlots} Open
-          </span>
-        </>
-      ) : (
-        <>
-          <span className='text-sm uppercase text-red-400'>
-            Commissions Closed
-          </span>
-          <span className='text-xs uppercase'>
-            {activeSlots}/{totalSlots} Left
-          </span>
-        </>
-      )}
+    <div className='flex flex-row justify-between items-center pl-4 mb-12 mt-4'>
+      <>
+        <StatusIndicator />
+
+        {statusOpen ? (
+          <>
+            <span className='text-sm uppercase text-green-400'>
+              Commissions Open
+            </span>
+            <span className='text-xs uppercase'>
+              {activeSlots}/{totalSlots} Open
+            </span>
+          </>
+        ) : (
+          <>
+            <span className='text-sm uppercase text-red-400'>
+              Commissions Closed
+            </span>
+            <span className='text-xs uppercase'>
+              {activeSlots}/{totalSlots} Left
+            </span>
+          </>
+        )}
+      </>
     </div>
   );
 };

@@ -5,6 +5,11 @@ let activeSlots = 5;
 let totalSlots = 10;
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
   if (req.method === 'GET') {
     res.status(200).json({
       statusOpen,
