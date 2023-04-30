@@ -16,7 +16,7 @@ export default function Home() {
   }
 
   const getCommissionData = async () => {
-    const res = await fetch('api/commissions');
+    const res = await fetch('https://commissions-omega.vercel.app/api/data');
     const data: CommissionDataConfig = await res.json();
     return data;
   };
