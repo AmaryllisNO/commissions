@@ -1,0 +1,42 @@
+//  ACCORDION
+
+.accordion-enter {
+  opacity: 1;
+  transition: opacity 300ms;
+}
+
+.accordion-enter-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+
+.accordion-exit {
+  opacity: 1;
+  transition: opacity 300ms;
+}
+
+.accordion-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+
+//  ACCORDION ITEM
+.accordionItem-enter {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 150ms ease-in;
+}
+
+.accordionItem-enter-active {
+  max-height: 12rem; /* Adjust this value based on the expected height of your content */
+}
+
+.accordionItem-exit {
+  max-height: 12rem; /* Adjust this value based on the expected height of your content */
+  overflow: hidden;
+  transition: max-height 150ms ease-in-out;
+}
+
+.accordionItem-exit-active {
+  max-height: 0;
+}
