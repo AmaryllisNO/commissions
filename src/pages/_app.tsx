@@ -13,7 +13,7 @@ export const theme: DefaultTheme = {
   },
   colors: {
     primary: '#FF3968',
-    background: '#191B20',
+    background: '#14161A',
     onBackground: '#242830',
     text: '#E3E3E3',
     offWhite: '#AEB0B2',

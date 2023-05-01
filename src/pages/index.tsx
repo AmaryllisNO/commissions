@@ -28,11 +28,9 @@ export default function Home() {
   useEffect(() => {
     const getCommissionData = async () => {
       try {
-        const res = await fetch(
-          'https://commissions-omega.vercel.app/api/commissions'
-        );
+        const res = await fetch('api/commissions');
         const data: CommissionDataConfig = await res.json();
-        console.log('response', data);
+        // console.log('response', data);
         setCommissionData(data);
         // console.log('commissionData', commissionData);
       } catch (error) {
@@ -44,7 +42,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    console.log('commissionData', commissionData);
+    // console.log('commissionData', commissionData);
   }, [commissionData]);
 
   return (
@@ -56,7 +54,7 @@ export default function Home() {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <main className={styles.main}>
-        <div className='h-28 w-full mt-8 outline-1 outline-red-900 relative'>
+        <div className='h-28 w-full mt-4 outline-1 outline-red-900 relative'>
           <Image
             src={'svg/COMMISSIONS LOGO.svg'}
             alt='logo'

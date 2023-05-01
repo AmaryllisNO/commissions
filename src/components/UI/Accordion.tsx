@@ -17,10 +17,13 @@ const accordionItems: AccordionItem[] = [
 
 const StyledAccordionItem = styled.div`
   border-bottom: 1px ${({ theme }) => theme.colors.lightFade} solid;
+  :hover: {
+  }
 `;
 
 const StyledAccordion = styled.div`
   background: ${({ theme }) => theme.colors.background};
+  background: none;
 `;
 
 const Accordion: React.FC = () => {
@@ -34,38 +37,40 @@ const Accordion: React.FC = () => {
   };
 
   return (
-    <CSSTransition
-      in={activeIndex !== null}
-      timeout={300}
-      classNames={'accordion'}
-    >
-      <StyledAccordion className={accordionClasses}>
-        {accordionItems.map((item, index) => (
-          <StyledAccordionItem key={index}>
-            <div
-              className='p-4 cursor-pointer hover:bg-gray-200'
-              onClick={() => toggleItem(index)}
-            >
-              <h3 className='text-base tracking-wide uppercase font-light'>
-                {item.title}
-              </h3>
-            </div>
-            <CSSTransition
-              in={activeIndex === index}
-              timeout={150}
-              classNames='accordionItem'
-              unmountOnExit
-            >
-              <div className='accordionItem-enter bg-zinc-800'>
-                <div className='p-4 h-full'>
-                  <p>{item.content}</p>
-                </div>
+    <>
+      <CSSTransition
+        in={activeIndex !== null}
+        timeout={300}
+        classNames={'accordion'}
+      >
+        <StyledAccordion className={accordionClasses}>
+          {accordionItems.map((item, index) => (
+            <StyledAccordionItem key={index}>
+              <div
+                className='p-4 cursor-pointer'
+                onClick={() => toggleItem(index)}
+              >
+                <h3 className='text-base tracking-wide uppercase font-light'>
+                  {item.title}
+                </h3>
               </div>
-            </CSSTransition>
-          </StyledAccordionItem>
-        ))}
-      </StyledAccordion>
-    </CSSTransition>
+              <CSSTransition
+                in={activeIndex === index}
+                timeout={150}
+                classNames='accordionItem'
+                unmountOnExit
+              >
+                <div className={`accordionItem-enter bg-zinc-800`}>
+                  <div className='p-4 h-full'>
+                    <p>{item.content}</p>
+                  </div>
+                </div>
+              </CSSTransition>
+            </StyledAccordionItem>
+          ))}
+        </StyledAccordion>
+      </CSSTransition>
+    </>
   );
 };
 

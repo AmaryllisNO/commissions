@@ -16,18 +16,36 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
     transition: 0.2s;
     scroll-behaviour: smooth;
+    /* outline: 1px solid red; */
   }
   
 
   body { 
+    ::before {
+      /* content: '';
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: url('/img/background-texture.jpg');
+      background-repeat: no-repeat;
+      background-size: cover; 
+      opacity: 0.3;
+      mix-blend-mode: soft-light;
+      filter: contrast(33%);
+      z-index: -1 */
+    }
       background-color: ${({ theme }) => theme.colors.background};
+      
       font-family: ${({ theme }) => theme.fonts.inter};
       margin: 0;
       padding: 0;
       color: white;
       /* min-height: 100vh; */
       min-height: 100vh;
-      min-width: 100vw;
+      min-width: 100%;
       position: absolute;
       top: 0;
       left: 0;

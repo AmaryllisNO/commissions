@@ -1,10 +1,22 @@
 import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { Lekton } from 'next/font/google';
+import ProgressBar from './ProgressBar';
+
+const lekton = Lekton({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+});
 
 const CommissionStatus = ({ commissionData }: any) => {
   const { statusOpen, activeSlots, totalSlots } = commissionData;
 
-  console.log('statusOpen', statusOpen);
+  let commissionsArray = Array.from({ length: totalSlots });
+
+  // console.log('statusOpen', statusOpen);
+
+  // COMMISSION PROGRESSBAR
+
   // ANIMATIONS
   const pulse = keyframes`
   0% {
@@ -47,28 +59,44 @@ const CommissionStatus = ({ commissionData }: any) => {
   `;
 
   return (
-    <div className='flex flex-row justify-between items-center pl-4 mb-12 mt-4'>
+    <div className='flex flex-col justify-between items-center pl-14 pr-14 mb-8 mt-8 '>
       <>
-        <StatusIndicator />
-
         {statusOpen ? (
-          <>
-            <span className='text-sm uppercase text-green-400'>
-              Commissions Open
+          <div className='flex flex-col items-center gap-y-4'>
+            <div className='flex flex-row items-center w-full'>
+              <StatusIndicator />
+              <span className='text-sm uppercase text-green-400 ml-8'>
+                Commissions Open
+              </span>
+            </div>
+
+            <ProgressBar
+              statusOpen={statusOpen}
+              activeSlots={activeSlots}
+              totalSlots={totalSlots}
+            />
+            <span className={`text-xs uppercase ${lekton.className}`}>
+              {activeSlots}/{totalSlots} Slots Taken
             </span>
-            <span className='text-xs uppercase'>
-              {activeSlots}/{totalSlots} Open
-            </span>
-          </>
+          </div>
         ) : (
-          <>
-            <span className='text-sm uppercase text-red-400'>
-              Commissions Closed
-            </span>
-            <span className='text-xs uppercase'>
+          <div className='flex flex-col items-center gap-y-4'>
+            <div className='flex flex-row items-center w-full'>
+              <StatusIndicator />
+              <span className='text-sm uppercase text-red-400 ml-8'>
+                Commissions Closed
+              </span>
+            </div>
+
+            <ProgressBar
+              statusOpen={statusOpen}
+              activeSlots={activeSlots}
+              totalSlots={totalSlots}
+            />
+            <span className={`text-xs uppercase ${lekton.className}`}>
               {activeSlots}/{totalSlots} Left
             </span>
-          </>
+          </div>
         )}
       </>
     </div>

@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-let statusOpen = false;
-let activeSlots = 5;
+let statusOpen = true;
+let activeSlots = 3;
 let totalSlots = 10;
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
