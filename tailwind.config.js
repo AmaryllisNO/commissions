@@ -12,7 +12,9 @@ module.exports = {
     letterSpacing: {
       wide: '0.5rem',
     },
-    extend: {},
+    extend: {
+      filter: ['hover', 'focus'],
+    },
   },
   plugins: [],
 };

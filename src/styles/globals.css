@@ -3,3 +3,9 @@
 @tailwind utilities;
 
 @import './animations.css';
+
+// ----------------------------------------------------------------
+
+.invert {
+  filter: invert(1);
+}

@@ -54,9 +54,9 @@ export default function Home() {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <main className={styles.main}>
-        <div className='h-28 w-full mt-4 outline-1 outline-red-900 relative'>
+        <div className='h-28 w-full mt-4 outline-1 outline-red-900 relative invert'>
           <Image
-            src={'svg/COMMISSIONS LOGO.svg'}
+            src={'svg/commissions svg for app.svg'}
             alt='logo'
             fill
             // className='object-cover'
