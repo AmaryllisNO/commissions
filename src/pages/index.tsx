@@ -58,6 +58,10 @@ export default function Home() {
     if (type === 'number') {
       // Parse the value to an integer. If it's NaN, default to 0
       newValue = isNaN(parseInt(value, 10)) ? 0 : parseInt(value, 10);
+    } else if (name === 'statusOpen') {
+      newValue = value === 'true';
+    } else {
+      newValue = value;
     }
 
     console.log('handleInputChange', name, newValue);
