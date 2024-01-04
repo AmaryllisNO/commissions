@@ -27,7 +27,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     activeSlots = newActiveSlots !== undefined ? newActiveSlots : activeSlots;
     totalSlots = newTotalSlots !== undefined ? newTotalSlots : totalSlots;
 
-    res.status(200).end();
+    res.status(200).json({
+      statusOpen,
+      activeSlots,
+      totalSlots,
+    });
   } else {
     res.status(405).end(); // Method Not Allowed
   }

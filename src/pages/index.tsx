@@ -1,13 +1,11 @@
 import Head from 'next/head';
 import Image from 'next/image';
-import { Inter } from 'next/font/google';
 import styles from '../styles/Main.module.css';
 
 import Accordion from '@/components/UI/Accordion';
 import CommissionStatus from '@/components/UI/CommissionStatus';
 import { useState, useEffect } from 'react';
-
-const inter = Inter({ subsets: ['latin'] });
+import _ from 'lodash';
 
 export default function Home() {
   // TYPES
@@ -23,6 +21,51 @@ export default function Home() {
     activeSlots: 0,
     totalSlots: 0,
   });
+  const [commissionFormState, setCommissionFormState] =
+    useState<CommissionDataConfig>(commissionData);
+
+  // FUNCTIONS
+  const updateCommissionData = async (newData: CommissionDataConfig) => {
+    try {
+      const response = await fetch('api/commissions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      try {
+        const updatedData = await response.json();
+        setCommissionData(updatedData);
+      } catch (error) {
+        console.error('No JSON response:', error);
+      }
+    } catch (error) {
+      console.error('Error while updating commission data', error);
+    }
+  };
+
+  const handleInputChange = (event: any) => {
+    // destructure object with relevant properties
+    const { name, value, type } = event.target;
+
+    let newValue: boolean | number = false;
+    if (type === 'number') {
+      // Parse the value to an integer. If it's NaN, default to 0
+      newValue = isNaN(parseInt(value, 10)) ? 0 : parseInt(value, 10);
+    }
+
+    console.log('handleInputChange', name, newValue);
+
+    setCommissionFormState((prevState) => {
+      return { ...prevState, [name]: newValue };
+    });
+  };
 
   // EFFECTS
   useEffect(() => {
@@ -32,18 +75,35 @@ export default function Home() {
         const data: CommissionDataConfig = await res.json();
         // console.log('response', data);
         setCommissionData(data);
-        // console.log('commissionData', commissionData);
+        setCommissionFormState(data);
+        console.log('commissionData: ', data);
       } catch (error) {
         console.error('there was an error fetching the data', error);
       }
     };
     getCommissionData();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    // console.log('commissionData', commissionData);
-  }, [commissionData]);
+    console.log('commissionFormState: ', commissionFormState);
+    const debouncedUpdate = _.debounce(() => {
+      updateCommissionData(commissionFormState);
+    }, 1000);
+
+    if (commissionFormState !== commissionData) {
+      console.log(
+        'POST commission data: ',
+        commissionFormState,
+        commissionData
+      );
+      debouncedUpdate();
+    }
+
+    return () => debouncedUpdate.cancel();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [commissionFormState]);
 
   return (
     <>
@@ -55,14 +115,53 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         <div className='h-28 w-full mt-4 outline-1 outline-red-900 relative invert'>
-          <Image
-            src={'svg/commissions svg for app.svg'}
-            alt='logo'
-            fill
-            // className='object-cover'
-          />
+          <Image src={'svg/commissions svg for app.svg'} alt='logo' fill />
         </div>
-        <CommissionStatus commissionData={commissionData} />
+        <CommissionStatus commissionData={commissionFormState} />
+        {/* Commission Data Form */}
+        <form className='space-y-4'>
+          <div className='flex flex-col'>
+            <label className='text-lg font-medium text-gray-700'>
+              Status Open:
+              <select
+                name='statusOpen'
+                value={commissionFormState?.statusOpen ? 'true' : 'false'}
+                onChange={handleInputChange}
+                className='mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+              >
+                <option value='true'>Open</option>
+                <option value='false'>Closed</option>
+              </select>
+            </label>
+          </div>
+          <div className='flex flex-col'>
+            <label className='text-lg font-medium text-gray-700'>
+              Active Slots:
+              <input
+                type='number'
+                name='activeSlots'
+                value={commissionFormState.activeSlots}
+                min='0'
+                onChange={handleInputChange}
+                className='mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+              />
+            </label>
+          </div>
+          <div className='flex flex-col'>
+            <label className='text-lg font-medium text-gray-700'>
+              Total Slots:
+              <input
+                type='number'
+                name='totalSlots'
+                value={commissionFormState.totalSlots}
+                min='0'
+                onChange={handleInputChange}
+                className='mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+              />
+            </label>
+          </div>
+        </form>
+
         <Accordion />
 
         <div className='h-96 w-80 absolute -bottom-24 -left-24'>
