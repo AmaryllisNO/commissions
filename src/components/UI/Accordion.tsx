@@ -17,8 +17,6 @@ const accordionItems: AccordionItem[] = [
 
 const StyledAccordionItem = styled.div`
   border-bottom: 1px ${({ theme }) => theme.colors.lightFade} solid;
-  :hover: {
-  }
 `;
 
 const StyledAccordion = styled.div`

@@ -11,8 +11,6 @@ const lekton = Lekton({
 const CommissionStatus = ({ commissionData }: any) => {
   const { statusOpen, activeSlots, totalSlots } = commissionData;
 
-  let commissionsArray = Array.from({ length: totalSlots });
-
   // console.log('statusOpen', statusOpen);
 
   // COMMISSION PROGRESSBAR
@@ -59,7 +57,7 @@ const CommissionStatus = ({ commissionData }: any) => {
   `;
 
   return (
-    <div className='flex flex-col justify-between items-center pl-14 pr-14 mb-8 mt-8 '>
+    <div className='flex flex-col justify-between items-center pl-14 pr-14 mb-3 mt-8 '>
       <>
         {statusOpen ? (
           <div className='flex flex-col items-center gap-y-4'>

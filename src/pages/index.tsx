@@ -4,8 +4,9 @@ import styles from '../styles/Main.module.css';
 
 import Accordion from '@/components/UI/Accordion';
 import CommissionStatus from '@/components/UI/CommissionStatus';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import _ from 'lodash';
+import { Input, Switch, cn } from '@nextui-org/react';
 
 export default function Home() {
   // TYPES
@@ -23,8 +24,25 @@ export default function Home() {
   });
   const [commissionFormState, setCommissionFormState] =
     useState<CommissionDataConfig>(commissionData);
+  const [keyedInput, setKeyedInput] = useState('');
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   // FUNCTIONS
+  const handleKeyPress = useCallback(
+    (event: any) => {
+      // Add the pressed key to the existing keyedInput
+      const newInput = keyedInput + event.key;
+
+      // Check if the last 5 characters match 'amary'
+      if (newInput.slice(-5).toLowerCase() === 'amary') {
+        setIsAdmin(true);
+      }
+
+      setKeyedInput(newInput);
+    },
+    [keyedInput]
+  );
+
   const updateCommissionData = async (newData: CommissionDataConfig) => {
     try {
       const response = await fetch('api/commissions', {
@@ -53,18 +71,20 @@ export default function Home() {
   const handleInputChange = (event: any) => {
     // destructure object with relevant properties
     const { name, value, type } = event.target;
+    console.log('input value: ', value);
 
-    let newValue: boolean | number = false;
+    let newValue: boolean | number;
     if (type === 'number') {
       // Parse the value to an integer. If it's NaN, default to 0
       newValue = isNaN(parseInt(value, 10)) ? 0 : parseInt(value, 10);
-    } else if (name === 'statusOpen') {
-      newValue = value === 'true';
-    } else {
+    } else if (type === 'checkbox') {
+      console.log('type is checkbox', value);
       newValue = value;
+    } else {
+      newValue = event.target.value;
     }
 
-    console.log('handleInputChange', name, newValue);
+    console.log('handleInputChange', name, newValue, type);
 
     setCommissionFormState((prevState) => {
       return { ...prevState, [name]: newValue };
@@ -72,6 +92,15 @@ export default function Home() {
   };
 
   // EFFECTS
+  useEffect(() => {
+    window.addEventListener('keypress', handleKeyPress);
+
+    // Cleanup the event listener
+    return () => {
+      window.removeEventListener('keypress', handleKeyPress);
+    };
+  }, [handleKeyPress]);
+
   useEffect(() => {
     const getCommissionData = async () => {
       try {
@@ -91,7 +120,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    console.log('commissionFormState: ', commissionFormState);
+    console.log('FORM STATE: ', commissionFormState);
     const debouncedUpdate = _.debounce(() => {
       updateCommissionData(commissionFormState);
     }, 1000);
@@ -118,64 +147,68 @@ export default function Home() {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <main className={styles.main}>
-        <div className='h-28 w-full mt-4 outline-1 outline-red-900 relative invert'>
-          <Image src={'svg/commissions svg for app.svg'} alt='logo' fill />
-        </div>
-        <CommissionStatus commissionData={commissionFormState} />
-        {/* Commission Data Form */}
-        <form className='space-y-4'>
-          <div className='flex flex-col'>
-            <label className='text-lg font-medium text-gray-700'>
-              Status Open:
-              <select
-                name='statusOpen'
-                value={commissionFormState?.statusOpen ? 'true' : 'false'}
-                onChange={handleInputChange}
-                className='mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
-              >
-                <option value='true'>Open</option>
-                <option value='false'>Closed</option>
-              </select>
-            </label>
+        <div className='relative overflow-hidden p-4 min-h-screen'>
+          <div className='h-28 w-full mt-4 -mb-3 outline-1 outline-red-900 relative invert'>
+            <Image src={'svg/commissions svg for app.svg'} alt='logo' fill />
           </div>
-          <div className='flex flex-col'>
-            <label className='text-lg font-medium text-gray-700'>
-              Active Slots:
-              <input
-                type='number'
-                name='activeSlots'
-                value={commissionFormState.activeSlots}
-                min='0'
-                onChange={handleInputChange}
-                className='mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
-              />
-            </label>
-          </div>
-          <div className='flex flex-col'>
-            <label className='text-lg font-medium text-gray-700'>
-              Total Slots:
-              <input
-                type='number'
-                name='totalSlots'
-                value={commissionFormState.totalSlots}
-                min='0'
-                onChange={handleInputChange}
-                className='mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
-              />
-            </label>
-          </div>
-        </form>
+          <CommissionStatus commissionData={commissionFormState} />
+          {/* Commission Data Form */}
+          {isAdmin && (
+            <form className='space-y-4'>
+              <div className='flex flex-col'>
+                <Switch
+                  type='checkbox'
+                  name='statusOpen'
+                  checked={commissionFormState?.statusOpen}
+                  color='success'
+                  onChange={(e) =>
+                    handleInputChange({
+                      target: {
+                        name: 'statusOpen',
+                        value: e.target.checked, // The value will be true or false depending on whether the checkbox is checked or not
+                        type: 'checkbox',
+                      },
+                    })
+                  }
+                >
+                  Status: {commissionFormState.statusOpen ? 'Open' : 'Closed'}
+                </Switch>
+              </div>
+              <div className='flex flex-row'>
+                <label className='text-sm font-medium mr-4 text-gray-700'>
+                  <Input
+                    type='number'
+                    label='Active Slots'
+                    name='activeSlots'
+                    value={commissionFormState.activeSlots?.toString()}
+                    min='0'
+                    onChange={handleInputChange}
+                  />
+                </label>
+                <label className='text-sm font-medium text-gray-700'>
+                  <Input
+                    type='number'
+                    label='Total Slots:'
+                    name='totalSlots'
+                    value={commissionFormState.totalSlots?.toString()}
+                    min='0'
+                    onChange={handleInputChange}
+                  />
+                </label>
+              </div>
+            </form>
+          )}
 
-        <Accordion />
+          <Accordion />
 
-        <div className='h-96 w-80 absolute -bottom-24 -left-24'>
-          <Image
-            src={'svg/ABSTRACT AMARY(5).svg'}
-            alt='Amary Logo'
-            fill
-            // className='object-cover'
-            className='object-contain'
-          />
+          <div className='absolute -bottom-20 -left-20 h-96 w-80 overflow-hidden '>
+            <Image
+              src={'svg/ABSTRACT AMARY(5).svg'}
+              alt='Amary Logo'
+              fill
+              className='object-contain'
+            />
+          </div>
         </div>
       </main>
     </>

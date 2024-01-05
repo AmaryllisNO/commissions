@@ -20,7 +20,7 @@ const GlobalStyle = createGlobalStyle`
   }
   
 
-  body { 
+  body, html { 
     ::before {
       /* content: '';
       display: block;
@@ -49,7 +49,7 @@ const GlobalStyle = createGlobalStyle`
       position: absolute;
       top: 0;
       left: 0;
-      overflow: hidden;
+      /* overflow: hidden; */
       
       /* border: 5px green dotted; */
     }

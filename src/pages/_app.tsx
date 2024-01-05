@@ -1,6 +1,7 @@
 import '@/styles/globals.css';
 import GlobalStyle from '../components/globalStyle';
 import { ThemeProvider, DefaultTheme } from 'styled-components';
+import { NextUIProvider } from '@nextui-org/react';
 import type { AppProps } from 'next/app';
 
 import { Inter } from 'next/font/google';
@@ -32,11 +33,13 @@ export const theme: DefaultTheme = {
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <main className={inter.className}>
-      <ThemeProvider theme={theme}>
-        <GlobalStyle />
-        <Component {...pageProps} />
-      </ThemeProvider>
+    <main className={`${inter.className} dark`}>
+      <NextUIProvider>
+        <ThemeProvider theme={theme}>
+          <GlobalStyle />
+          <Component {...pageProps} />
+        </ThemeProvider>
+      </NextUIProvider>
     </main>
   );
 }

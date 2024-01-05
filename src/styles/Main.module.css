@@ -1,5 +1,6 @@
 .main {
-  margin: 16px;
+  /* margin: 16px; */
   /* border: 10px solid red; */
-  height: 100%;
+  min-height: 100vh; /* Updated this line */
+  overflow-y: auto;
 }
