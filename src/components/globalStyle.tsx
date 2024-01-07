@@ -15,7 +15,8 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     transition: 0.2s;
-    scroll-behaviour: smooth;
+    scroll-behavior: smooth;
+  
     /* outline: 1px solid red; */
   }
   
@@ -70,6 +71,10 @@ const GlobalStyle = createGlobalStyle`
     color: white;
     text-decoration: none;
     cursor: pointer;
+  }
+
+  input, select, textarea {
+    font-size: 16px; /* Adjust this size as needed */
   }
 `;
 

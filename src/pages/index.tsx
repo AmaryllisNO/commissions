@@ -6,7 +6,10 @@ import Accordion from '@/components/UI/Accordion';
 import CommissionStatus from '@/components/UI/CommissionStatus';
 import { useState, useEffect, useCallback } from 'react';
 import _ from 'lodash';
-import { Input, Switch, cn } from '@nextui-org/react';
+import { Button, Input, Switch, cn } from '@nextui-org/react';
+import { useAtom } from 'jotai';
+import { authAtom } from '@/data/atoms/authAtom';
+import Link from 'next/link';
 
 export default function Home() {
   // TYPES
@@ -25,7 +28,17 @@ export default function Home() {
   const [commissionFormState, setCommissionFormState] =
     useState<CommissionDataConfig>(commissionData);
   const [keyedInput, setKeyedInput] = useState('');
+  const [auth, setAuth] = useAtom(authAtom);
+  console.log('auth: ', auth);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (auth.isLoggedIn) {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
+  }, [auth.isLoggedIn]);
 
   // FUNCTIONS
   const handleKeyPress = useCallback(
@@ -182,6 +195,7 @@ export default function Home() {
                     name='activeSlots'
                     value={commissionFormState.activeSlots?.toString()}
                     min='0'
+                    size='lg'
                     onChange={handleInputChange}
                   />
                 </label>
@@ -192,6 +206,7 @@ export default function Home() {
                     name='totalSlots'
                     value={commissionFormState.totalSlots?.toString()}
                     min='0'
+                    size='lg'
                     onChange={handleInputChange}
                   />
                 </label>
@@ -200,6 +215,24 @@ export default function Home() {
           )}
 
           <Accordion />
+          <div
+            className='absolute bottom-0 right-0
+           pr-3 pb-2 text-gray-500'
+          >
+            {auth.isLoggedIn ? (
+              <Button
+                onClick={() => {
+                  setAuth({ isLoggedIn: false, user: null });
+                }}
+              >
+                Log Out
+              </Button>
+            ) : (
+              <Link href='/login' className='text-gray-400'>
+                admin
+              </Link>
+            )}
+          </div>
 
           <div className='absolute -bottom-20 -left-20 h-96 w-80 overflow-hidden '>
             <Image
