@@ -10,6 +10,7 @@ declare module 'styled-components' {
     colors: {
       primary: string;
       background: string;
+      transparentBackground: string;
       onBackground: string;
       text: string;
       offWhite: string;
@@ -19,10 +20,13 @@ declare module 'styled-components' {
 
     measurements: {
       sidebar: string;
+      desktopMaxWidth: string;
     };
 
     breakpoints: {
       mobile: string;
+      desktop: string;
+      tablet: string;
     };
   }
 }

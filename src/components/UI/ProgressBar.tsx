@@ -10,7 +10,7 @@ const ProgressBar = ({
   activeSlots: number;
 }) => {
   return (
-    <div className='flex flex-row items-center w-full h-2 gap-1'>
+    <div className='flex flex-row items-center w-full h-2 gap-1 transition duration-75 '>
       {Array.from({ length: totalSlots }, (_, index) => {
         const isActive = index < activeSlots;
         const bgColor = isActive
@@ -19,7 +19,12 @@ const ProgressBar = ({
             : 'bg-red-400'
           : 'border border-gray-500';
 
-        return <div key={index} className={`${bgColor} h-full w-full`}></div>;
+        return (
+          <div
+            key={index}
+            className={`${bgColor} h-full w-full transition duration-75 `}
+          ></div>
+        );
       })}
     </div>
   );

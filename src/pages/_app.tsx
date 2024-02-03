@@ -15,6 +15,7 @@ export const theme: DefaultTheme = {
   colors: {
     primary: '#FF3968',
     background: '#14161A',
+    transparentBackground: '#14161ab1',
     onBackground: '#242830',
     text: '#E3E3E3',
     offWhite: '#AEB0B2',
@@ -24,10 +25,13 @@ export const theme: DefaultTheme = {
 
   measurements: {
     sidebar: '250px',
+    desktopMaxWidth: '1200px',
   },
 
   breakpoints: {
     mobile: '768px',
+    desktop: '1200px',
+    tablet: '1024px',
   },
 };
 

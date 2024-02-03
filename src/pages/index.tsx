@@ -1,15 +1,26 @@
 import Head from 'next/head';
-import Image from 'next/image';
 import styles from '../styles/Main.module.css';
+import FullRenders from '@/assets/svg/image-regular-1.svg';
+import Image from 'next/image';
 
-import Accordion from '@/components/UI/Accordion';
+// import Accordion from '@/components/UI/Accordion';
 import CommissionStatus from '@/components/UI/CommissionStatus';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import _ from 'lodash';
-import { Button, Input, Switch, cn } from '@nextui-org/react';
+import {
+  Accordion,
+  AccordionItem,
+  Avatar,
+  Button,
+  Input,
+  Image as Img,
+  Switch,
+} from '@nextui-org/react';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/data/atoms/authAtom';
 import Link from 'next/link';
+import { ThemeContext, keyframes } from 'styled-components';
+import { accordionItems } from '@/data/accordionItems';
 
 export default function Home() {
   // TYPES
@@ -19,7 +30,9 @@ export default function Home() {
     totalSlots?: number;
   }
 
-  // STATES
+  // INITIALIZATIONS
+  const theme = useContext(ThemeContext);
+  const [auth, setAuth] = useAtom(authAtom);
   const [commissionData, setCommissionData] = useState<CommissionDataConfig>({
     statusOpen: false,
     activeSlots: 0,
@@ -27,35 +40,13 @@ export default function Home() {
   });
   const [commissionFormState, setCommissionFormState] =
     useState<CommissionDataConfig>(commissionData);
-  const [keyedInput, setKeyedInput] = useState('');
-  const [auth, setAuth] = useAtom(authAtom);
-  console.log('auth: ', auth);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (auth.isLoggedIn) {
-      setIsAdmin(true);
-    } else {
-      setIsAdmin(false);
-    }
-  }, [auth.isLoggedIn]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeAccordionIndex, setActiveAccordionIndex] = useState<
+    null | number
+  >(null);
 
   // FUNCTIONS
-  const handleKeyPress = useCallback(
-    (event: any) => {
-      // Add the pressed key to the existing keyedInput
-      const newInput = keyedInput + event.key;
-
-      // Check if the last 5 characters match 'amary'
-      if (newInput.slice(-5).toLowerCase() === 'amary') {
-        setIsAdmin(true);
-      }
-
-      setKeyedInput(newInput);
-    },
-    [keyedInput]
-  );
-
   const updateCommissionData = async (newData: CommissionDataConfig) => {
     try {
       const response = await fetch('api/commissions', {
@@ -104,15 +95,20 @@ export default function Home() {
     });
   };
 
+  const handleAccordionToggle = (index: number) => {
+    console.log('handleAccordionToggle', index);
+    setActiveAccordionIndex(index);
+    setIsOpen(!isOpen);
+  };
+
+  useEffect(() => {
+    console.log('is accordion open?', isOpen);
+  }, [isOpen]);
+
   // EFFECTS
   useEffect(() => {
-    window.addEventListener('keypress', handleKeyPress);
-
-    // Cleanup the event listener
-    return () => {
-      window.removeEventListener('keypress', handleKeyPress);
-    };
-  }, [handleKeyPress]);
+    setIsAdmin(auth.isLoggedIn);
+  }, [auth.isLoggedIn]);
 
   useEffect(() => {
     const getCommissionData = async () => {
@@ -128,7 +124,6 @@ export default function Home() {
       }
     };
     getCommissionData();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -159,7 +154,7 @@ export default function Home() {
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <main className={styles.main}>
+      <main className={`${styles.main}`}>
         <div className='relative overflow-hidden p-4 min-h-screen'>
           <div className='h-28 w-full mt-4 -mb-3 outline-1 outline-red-900 relative invert'>
             <Image src={'svg/commissions svg for app.svg'} alt='logo' fill />
@@ -167,7 +162,13 @@ export default function Home() {
           <CommissionStatus commissionData={commissionFormState} />
           {/* Commission Data Form */}
           {isAdmin && (
-            <form className='space-y-4'>
+            <form
+              className='space-y-4'
+              style={{
+                maxWidth: theme.measurements.desktopMaxWidth,
+                margin: 'auto',
+              }}
+            >
               <div className='flex flex-col'>
                 <Switch
                   type='checkbox'
@@ -214,7 +215,54 @@ export default function Home() {
             </form>
           )}
 
-          <Accordion />
+          {/* <Accordion /> */}
+          <section
+            style={{
+              backgroundColor: theme.colors.background,
+              margin: 'auto',
+              maxWidth: theme.measurements.desktopMaxWidth,
+
+              // ... other styles
+            }}
+            className={`p-2 flex flex-col gap-1 w-full`}
+          >
+            <Accordion
+              selectionMode='single'
+              itemClasses={{
+                base: `bg-transparentBackground
+              `,
+              }}
+            >
+              {accordionItems.map((accordionItem, index: number) => {
+                return (
+                  <AccordionItem
+                    key={index}
+                    aria-label='Full Render'
+                    title={accordionItem.title}
+                    onPress={() => {
+                      handleAccordionToggle(index);
+                    }}
+                    className={`${
+                      activeAccordionIndex === index && isOpen
+                        ? 'fixed inset-0 z-50 bg-background p-5'
+                        : 'static'
+                    }`}
+                    startContent={
+                      <Img
+                        radius='none'
+                        width={32}
+                        isBlurred
+                        src={accordionItem.icon}
+                      />
+                    }
+                  >
+                    {accordionItem.content}
+                  </AccordionItem>
+                );
+              })}
+            </Accordion>
+          </section>
+
           <div
             className='absolute bottom-0 right-0
            pr-3 pb-2 text-gray-500'
@@ -234,7 +282,7 @@ export default function Home() {
             )}
           </div>
 
-          <div className='absolute -bottom-20 -left-20 h-96 w-80 overflow-hidden '>
+          <div className='absolute -bottom-20 -left-20 h-96 w-80 overflow-hidden z-0 '>
             <Image
               src={'svg/ABSTRACT AMARY(5).svg'}
               alt='Amary Logo'

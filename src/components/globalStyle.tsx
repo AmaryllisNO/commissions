@@ -14,7 +14,7 @@ const GlobalStyle = createGlobalStyle`
     -webkit-box-sizing: border-box;
     margin: 0;
     padding: 0;
-    transition: 0.2s;
+    /* transition: 1s; */
     scroll-behavior: smooth;
   
     /* outline: 1px solid red; */
